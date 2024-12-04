@@ -54,7 +54,7 @@ function Home() {
             } else {
                 clearInterval(interval)
             }
-        }, 30)
+        }, 10)
     }
 
     useEffect(() => {
@@ -79,19 +79,19 @@ function Home() {
                 <Marker position={coordenadaAtual.toJson()} icon={Icons.airplane} />
                 <Marker position={coordenadaFinal.toJson()} icon={Icons.endIcon} />
 
-                <Polyline
+                {/* <Polyline
                     positions={[coordenadaInicial.toJson(), coordenadaFinal.toJson()]} // Posições da linha
                     color="red"
                     weight={1}
                     opacity={0.7}
                     smoothFactor={1}
-                />
+                /> */}
 
                 <div className={css.info}>
                     <p>Latitude: {coordenadaAtual.latitude.toFixed(4)}</p>
                     <p>Longitude: {coordenadaAtual.longitude.toFixed(4)}</p>
                     <p>Distancia da viagem: {distanciaEntreCoordenadas(coordenadaInicial, coordenadaFinal).toFixed(1)} km</p>
-                    <p>Localidade: {localidade ? <>{localidade?.pais}, {localidade?.estado}</> : <span className={css.error}>Avião fora do Brasil</span>}</p>
+                    <p>Localidade: {localidade ? <>{localidade?.pais}, {localidade?.estado}</> : <span className={css.error}>Fora do Brasil</span>}</p>
                 </div>
             </MapContainer>
         </main>
