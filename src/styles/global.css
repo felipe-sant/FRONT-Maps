@@ -12,6 +12,5 @@
 }
 
 main {
-    min-height: 100vh;
-    max-height: auto;
+    height: 100vh;
 }
