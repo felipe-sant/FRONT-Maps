@@ -21,12 +21,12 @@ function Home() {
         if (iniciado) return
         iniciado = true
 
-        // let coord1 = await BackendConnection.getRandomCoord()
-        // let coord2 = await BackendConnection.getRandomCoord()
-        // while (distanciaEntreCoordenadas(coord1, coord2) < 1000) coord2 = await BackendConnection.getRandomCoord()
+        let coord1 = await BackendConnection.getRandomCoord()
+        let coord2 = await BackendConnection.getRandomCoord()
+        while (distanciaEntreCoordenadas(coord1, coord2) < 1000) coord2 = await BackendConnection.getRandomCoord()
 
-        let coord1 = new Coordenada(-23.550520, -46.633308)
-        let coord2 = new Coordenada(39, 116)
+        // let coord1 = new Coordenada(-23.550520, -46.633308)
+        // let coord2 = new Coordenada(39, 116)
 
         // let coord1 = new Coordenada(-23.189609, -45.884264)
         // let coord2 = new Coordenada(-23.778889, -45.358056)
