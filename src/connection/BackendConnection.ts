@@ -1,5 +1,5 @@
 import BrazilianStates from "../enum/brazilianStates";
-import get from "../functions/get";
+import get from "../functions/methods/get";
 import CoordinateClass from "../models/CoordinateClass";
 import CoordinateType from "../types/CoordinateType";
 import LocalityType from "../types/LocalityType";
