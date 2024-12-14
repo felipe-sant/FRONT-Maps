@@ -3,7 +3,7 @@ import startIcon from '../images/start.png';
 import endIcon from "../images/end.png";
 import airplaneIcon from "../images/airplane.png"
 
-export default class Icons {
+class Icons {
     static startIcon = new L.Icon({
         iconUrl: startIcon,
         iconRetinaUrl: startIcon,
@@ -26,3 +26,5 @@ export default class Icons {
         iconSize: [24, 24],
     })
 }
+
+export default Icons;

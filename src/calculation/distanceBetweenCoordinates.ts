@@ -1,6 +1,6 @@
-import Coordenada from "../types/Coordenada";
+import CoordinateClass from "../models/CoordinateClass";
 
-export default function distanciaEntreCoordenadas(coord1: Coordenada, coord2: Coordenada): number {
+function distanceBetweenCoordinates(coord1: CoordinateClass, coord2: CoordinateClass): number {
     const R = 6371;
     const φ1 = coord1.latitude * Math.PI / 180;
     const φ2 = coord2.latitude * Math.PI / 180;
@@ -15,3 +15,5 @@ export default function distanciaEntreCoordenadas(coord1: Coordenada, coord2: Co
     const d = R * c;
     return d;
 }
+
+export default distanceBetweenCoordinates;
