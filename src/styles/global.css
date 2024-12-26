@@ -17,6 +17,6 @@ main {
 
 @media (max-width: 764px) {
     main {
-        padding-bottom: 20px;
+        padding-bottom: 0px;
     }
 }
