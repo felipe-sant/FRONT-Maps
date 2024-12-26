@@ -104,10 +104,36 @@
 
 @media (max-width: 768px) {
     .menu {
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: rgba(255, 255, 255, 0.5);
         width: calc(100% - 20px);
         right: 10px;
         left: 10px;
         bottom: 64px;
+        gap: 15px;
+        height: 290px;
+    }
+
+    .info label {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .info label img {
+        width: 12px;
+        margin-right: 10px;
+    }
+
+    .play {
+        gap: 15px;
+    }
+
+    .input label {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .input label img {
+        width: 8px;
+        margin-right: 10px;
     }
 }
