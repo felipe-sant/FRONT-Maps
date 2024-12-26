@@ -7,10 +7,11 @@ import Icons from "../constants/Icons";
 import Menu from "../components/menuComponent";
 import positionBetweenRadianPoints from "../calculation/positionBetweenRadianPoints";
 import saoPaulogeographicCenter from "../constants/saoPauloGeographicCenter";
+import { Helmet } from 'react-helmet';
 
 export default function Maps() {
-    const [initialCoord, setInitialCoord] = useState<CoordinateClass>(new CoordinateClass({latitude: 0, longitude: 0}))
-    const [finalCoord, setFinalCoord] = useState<CoordinateClass>(new CoordinateClass({latitude: 0, longitude: 0}))
+    const [initialCoord, setInitialCoord] = useState<CoordinateClass>(new CoordinateClass({ latitude: 0, longitude: 0 }))
+    const [finalCoord, setFinalCoord] = useState<CoordinateClass>(new CoordinateClass({ latitude: 0, longitude: 0 }))
     const [currentCoord, setCurrentCoord] = useState<CoordinateClass>(new CoordinateClass(saoPaulogeographicCenter))
 
     // async function randomizeCoord() {
@@ -65,28 +66,37 @@ export default function Maps() {
     }, [])
 
     return (
-        <main>
-            <MapContainer
-                center={currentCoord.toArray()}
-                zoom={6}
-                className={css.map}
-            >
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    errorTileUrl="https://upload.wikimedia.org/wikipedia/commons/e/e0/Error.svg"
-                />
-                <Marker position={initialCoord.toArray()} icon={Icons.startIcon} />
-                <Marker position={finalCoord.toArray()} icon={Icons.endIcon} />
-                <Marker position={currentCoord.toArray()} icon={Icons.airplaneIcon} />
-                <LocationClicked />
-                <Menu
-                    moveOn={moveOn}
-                    info={{ 
-                        currentCoord: currentCoord
-                    }}
-                />
-            </MapContainer>
-        </main>
+        <>
+            <Helmet>
+                <title>Mapa-Mundi | Sistema de voo de avião</title>
+                <link rel="icon" href="%PUBLIC_URL%/favicon-16x16.png" sizes="16x16" />
+                <link rel="icon" href="%PUBLIC_URL%/favicon-32x32.png" sizes="32x32" />
+                <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+                <meta name="theme-color" content="#ffffff" />
+            </Helmet>
+            <main>
+                <MapContainer
+                    center={currentCoord.toArray()}
+                    zoom={6}
+                    className={css.map}
+                >
+                    <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        errorTileUrl="https://upload.wikimedia.org/wikipedia/commons/e/e0/Error.svg"
+                    />
+                    <Marker position={initialCoord.toArray()} icon={Icons.startIcon} />
+                    <Marker position={finalCoord.toArray()} icon={Icons.endIcon} />
+                    <Marker position={currentCoord.toArray()} icon={Icons.airplaneIcon} />
+                    <LocationClicked />
+                    <Menu
+                        moveOn={moveOn}
+                        info={{
+                            currentCoord: currentCoord
+                        }}
+                    />
+                </MapContainer>
+            </main>
+        </>
     )
 }
