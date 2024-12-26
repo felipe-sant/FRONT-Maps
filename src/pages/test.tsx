@@ -1,11 +1,14 @@
-import get from "../functions/methods/get"
+import BackendConnection from "../connection/BackendConnection"
+import saoPaulogeographicCenter from "../constants/saoPauloGeographicCenter"
+import CoordinateClass from "../models/CoordinateClass"
+import LocalityType from "../types/LocalityType"
 
 export default function Test() {
-    const url = "https://3001-cs-e30363ef-557e-4565-b481-2d435839e889.cs-us-east1-pkhd.cloudshell.dev/"
+    const coord: CoordinateClass = new CoordinateClass(saoPaulogeographicCenter)
     
     async function testar() {
-        const response = await get(url)
-        console.log(response)
+        const response: LocalityType | undefined = await BackendConnection.getLocation(coord)
+        if (response) alert(`${response.country} - ${response.state}`)
     }
     
     return (
