@@ -9,7 +9,7 @@ class CoordinateClass {
         this.longitude = coordinateType.longitude;
     }
 
-    public toArray(): number[] {
+    public toArray(): [latidute: number, longitude: number] {
         return [this.latitude, this.longitude];
     }
 }

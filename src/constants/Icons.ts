@@ -12,6 +12,8 @@ class Icons {
         iconAnchor: [12, 42]
     })
 
+    static startIconUrl = startIcon
+
     static endIcon = new L.Icon({
         iconUrl: endIcon,
         iconRetinaUrl: endIcon,
@@ -20,11 +22,15 @@ class Icons {
         iconAnchor: [12, 41]
     })
 
-    static airplane = new L.Icon({
+    static endIconUrl = endIcon
+
+    static airplaneIcon = new L.Icon({
         iconUrl: airplaneIcon,
         iconRetinaUrl: airplaneIcon,
         iconSize: [24, 24],
     })
+
+    static airplaneIconUrl = airplaneIcon
 }
 
 export default Icons;

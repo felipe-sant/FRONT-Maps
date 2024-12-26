@@ -1,0 +1,112 @@
+.menu {
+    position: absolute;
+    right: 10px;
+    bottom: 28px;
+    width: 360px;
+    height: 320px;
+    z-index: 9999;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid #bbb;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info label {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.info label img {
+    width: 16px;
+    margin-right: 10px;
+}
+
+.info label span {
+    margin-left: 10px;
+}
+
+.play {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    position: relative;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+.input label {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.input label img {
+    width: 12px;
+    margin-right: 10px;
+}
+
+.input label button {
+    margin-left: 10px;
+    padding: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.input label button.clicked {
+    background-color: #bbb;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.inputs input {
+    height: 32px;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+    padding: 0px 10px;
+    width: 45%;
+}
+
+.input input:focus {
+    border: none;
+}
+
+.button {
+    display: flex;
+    justify-content: end;
+    align-content: end;
+    position: absolute;
+    bottom: 20px;
+    width: calc(100% - 40px);
+}
+
+.button button {
+    background-color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .menu {
+        width: calc(100% - 20px);
+        right: 10px;
+        left: 10px;
+        bottom: 28px;
+    }
+}
