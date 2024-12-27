@@ -46,7 +46,10 @@ export default function Menu(props: MenuProps) {
         const initialCoordLongitudeNumber = parseFloat(initialCoordLongitude)
         const finalCoordLatitudeNumber = parseFloat(finalCoordLatitude)
         const finalCoordLongitudeNumber = parseFloat(finalCoordLongitude)
-        if (Number.isNaN(initialCoordLatitudeNumber) || Number.isNaN(initialCoordLongitudeNumber) || Number.isNaN(finalCoordLatitudeNumber) || Number.isNaN(finalCoordLongitudeNumber)) return
+        if (Number.isNaN(initialCoordLatitudeNumber) || Number.isNaN(initialCoordLongitudeNumber) || Number.isNaN(finalCoordLatitudeNumber) || Number.isNaN(finalCoordLongitudeNumber)) {
+            moveOn(undefined, undefined, updateLocation)
+            return
+        }
         const initialCoord: CoordinateClass = new CoordinateClass({ latitude: initialCoordLatitudeNumber, longitude: initialCoordLongitudeNumber })
         await updateLocation(initialCoord)
         const finalCoord: CoordinateClass = new CoordinateClass({ latitude: finalCoordLatitudeNumber, longitude: finalCoordLongitudeNumber })

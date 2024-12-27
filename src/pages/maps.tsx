@@ -17,21 +17,36 @@ export default function Maps() {
 
     const [isIlhabela, setIsIlhabela] = useState<boolean>(false)
 
-    // async function randomizeCoord() {
-    //    let randomCoord = await BackendConnection.getRandomCoord()
-    //    console.log(randomCoord)
-    // }
+    async function randomizeCoord() {
+        let randomCoord = undefined
+        randomCoord = await BackendConnection.getRandomCoord()
+        if (randomCoord) setInitialCoord(randomCoord)
+        randomCoord = await BackendConnection.getRandomCoord()
+        if (randomCoord) setFinalCoord(randomCoord)
+    }
 
-    async function moveOn(initialCoord: CoordinateClass, finalCoord: CoordinateClass, updateCoord: (coord: CoordinateClass) => Promise<void>) {
-        setInitialCoord(initialCoord)
-        setFinalCoord(finalCoord)
+    async function moveOn(startCoord: CoordinateClass | undefined, endCoord: CoordinateClass | undefined, updateCoord: (coord: CoordinateClass) => Promise<void>) {
+        setIsIlhabela(false)
+
+        let start = initialCoord
+        let end = finalCoord
+        if (startCoord) {
+            setInitialCoord(startCoord)
+            start = startCoord
+        }
+        if (endCoord) {
+            setFinalCoord(endCoord)
+            end = endCoord
+        }
+
         if (localStorage.getItem("inFlight")) return
         localStorage.setItem("inFlight", "in flight")
+
         let t = 0
         let t2 = 200
         const interval = setInterval(async () => {
             if (t < 1) {
-                const newCoord = positionBetweenRadianPoints(initialCoord, finalCoord, t)
+                const newCoord = positionBetweenRadianPoints(start, end, t)
                 if (t2 === 200) {
                     updateCoord(newCoord)
                     t2 = 0
@@ -42,9 +57,9 @@ export default function Maps() {
             } else {
                 clearInterval(interval)
                 localStorage.removeItem("inFlight")
-                const location = await BackendConnection.getLocation(finalCoord)
+                const location = await BackendConnection.getLocation(end)
+                setIsIlhabela(true)
                 if (location !== undefined && location.municipality === "Ilhabela") {
-                    setIsIlhabela(true)
                 }
             }
         }, 10)
@@ -70,7 +85,7 @@ export default function Maps() {
     }
 
     useEffect(() => {
-        // randomizeCoord()
+        randomizeCoord()
         localStorage.removeItem("inFlight")
         localStorage.removeItem("clickPointEvent")
         localStorage.removeItem("eventType")
