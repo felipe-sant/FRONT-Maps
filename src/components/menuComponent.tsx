@@ -51,7 +51,6 @@ export default function Menu(props: MenuProps) {
             return
         }
         const initialCoord: CoordinateClass = new CoordinateClass({ latitude: initialCoordLatitudeNumber, longitude: initialCoordLongitudeNumber })
-        await updateLocation(initialCoord)
         const finalCoord: CoordinateClass = new CoordinateClass({ latitude: finalCoordLatitudeNumber, longitude: finalCoordLongitudeNumber })
         moveOn(
             initialCoord,

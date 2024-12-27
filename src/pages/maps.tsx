@@ -43,11 +43,11 @@ export default function Maps() {
         localStorage.setItem("inFlight", "in flight")
 
         let t = 0
-        let t2 = 200
+        let t2 = 501
         const interval = setInterval(async () => {
             if (t < 1) {
                 const newCoord = positionBetweenRadianPoints(start, end, t)
-                if (t2 === 200) {
+                if (t2 === 501) {
                     updateCoord(newCoord)
                     t2 = 0
                 }
@@ -58,8 +58,8 @@ export default function Maps() {
                 clearInterval(interval)
                 localStorage.removeItem("inFlight")
                 const location = await BackendConnection.getLocation(end)
-                setIsIlhabela(true)
                 if (location !== undefined && location.municipality === "Ilhabela") {
+                    setIsIlhabela(true)
                 }
             }
         }, 10)

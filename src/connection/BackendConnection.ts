@@ -4,7 +4,7 @@ import CoordinateClass from "../models/CoordinateClass";
 import Locality from "../types/LocalityType";
 
 class BackendConnection {
-    private static readonly backend_url = "https://automatic-system-gpg95jgjx4vcp9r7-3001.app.github.dev/";
+    private static readonly backend_url = "https://localhost:3001/";
     public static readonly routes = {
         coord: BackendConnection.backend_url + "coord/",
         coord_location: BackendConnection.backend_url + "coord/location/",
