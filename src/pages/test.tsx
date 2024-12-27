@@ -8,7 +8,11 @@ export default function Test() {
     
     async function testar() {
         const response: LocalityType | undefined = await BackendConnection.getLocation(coord)
-        if (response) alert(`${response.country} - ${response.state}`)
+        if (!response) {
+            console.log("Failed to connect")
+        } else {
+            console.log(response)
+        }
     }
     
     return (
