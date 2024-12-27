@@ -1,8 +1,7 @@
 import BrazilianStates from "../enum/brazilianStates";
 import get from "../functions/methods/get";
 import CoordinateClass from "../models/CoordinateClass";
-import CoordinateType from "../types/CoordinateType";
-import LocalityType from "../types/LocalityType";
+import Locality from "../types/LocalityType";
 
 class BackendConnection {
     private static readonly backend_url = "http://localhost:3001/";
@@ -12,24 +11,26 @@ class BackendConnection {
         coord_random: BackendConnection.backend_url + "coord/randomCoord/",
     }
 
-    public static async getLocation(coord: CoordinateClass): Promise<LocalityType | undefined> {
+    public static async getLocation(coord: CoordinateClass): Promise<Locality | undefined> {
         try {
             const query = {
                 lat: coord.latitude,
                 lon: coord.longitude
             }
             const response = await get(BackendConnection.routes.coord_location, query)
-            const locality: LocalityType = {
+            if (!response) return undefined
+            
+            const locality: Locality = {
                 country: response.country,
                 state: response.state,
-                city: response.city,
-                district: response.district,
-                street: response.street,
-                postalCode: response.postalCode
+                municipality: response.municipality,
+                microregion: response.microregion,
+                mesoregion: response.mesoregion
             }
             return locality
         } catch (error) {
             console.log(error)
+            return undefined
         }
     }
 

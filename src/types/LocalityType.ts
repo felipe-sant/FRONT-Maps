@@ -1,10 +1,9 @@
-type LocalityType = {
+type Locality = {
     country: string;
     state?: string;
-    city?: string;
-    district?: string;
-    street?: string;
-    postalCode?: string;
+    municipality?: string;
+    microregion?: string;
+    mesoregion?: string;
 };
 
-export default LocalityType;
+export default Locality;

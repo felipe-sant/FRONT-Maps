@@ -2,6 +2,7 @@ import L from 'leaflet';
 import startIcon from '../images/start.png';
 import endIcon from "../images/end.png";
 import airplaneIcon from "../images/airplane.png"
+import boomIcon from "../images/boom.gif"
 
 class Icons {
     static startIcon = new L.Icon({
@@ -31,6 +32,12 @@ class Icons {
     })
 
     static airplaneIconUrl = airplaneIcon
+
+    static boomIcon = new L.Icon({
+        iconUrl: boomIcon,
+        iconRetinaUrl: boomIcon,
+        iconSize: [32, 32],
+    })
 }
 
 export default Icons;
