@@ -4,7 +4,7 @@ import CoordinateClass from "../models/CoordinateClass";
 import Locality from "../types/LocalityType";
 
 class BackendConnection {
-    private static readonly backend_url = "http://localhost:3001/";
+    private static readonly backend_url = "https://Back-maps.vercel.app/";
     public static readonly routes = {
         coord: BackendConnection.backend_url + "coord/",
         coord_location: BackendConnection.backend_url + "coord/location/",
@@ -17,7 +17,6 @@ class BackendConnection {
                 lat: coord.latitude,
                 lon: coord.longitude
             }
-            console.log(BackendConnection.routes.coord_location)
             const response = await get(BackendConnection.routes.coord_location, query)
             if (!response) return undefined
             

@@ -43,17 +43,17 @@ export default function Maps() {
         localStorage.setItem("inFlight", "in flight")
 
         let t = 0
-        let t2 = 501
+        let t2 = 0
         const interval = setInterval(async () => {
             if (t < 1) {
                 const newCoord = positionBetweenRadianPoints(start, end, t)
-                if (t2 === 501) {
+                if (t2 === 0) {
                     updateCoord(newCoord)
-                    t2 = 0
+                    t2 = 100
                 }
                 setCurrentCoord(newCoord)
                 t += 0.0005
-                t2 += 1
+                t2 -= 1
             } else {
                 clearInterval(interval)
                 localStorage.removeItem("inFlight")
