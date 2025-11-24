@@ -1,12 +1,20 @@
-### [Veja o projeto rodando aqui.](https://front-maps.vercel.app/)
+# ✈️ Simulador de Rotas Aéreas no Território Brasileiro
 
-Site que gera dois pontos geográficos aleatórios dentro do território brasileiro e simula uma rota de voo entre eles, considerando com precisão a curvatura da Terra. O sistema integra a API do IBGE para gerenciar as coordenadas geográficas e identificar os estados brasileiros atravessados pela aeronave durante a simulação.
+### 🔗 Veja o projeto rodando: https://front-maps.vercel.app/
 
-O projeto é divido com varias partes, envolvendo a **renderização do mapa**, **calculo de distancia e posição** de pontos entre coordenadas, utilização de uma **API interna** para comunicação com o backend da aplicação e utilização de **css modules**.
+Este projeto gera dois pontos geográficos aleatórios dentro do território brasileiro e simula uma rota aérea entre eles, levando em consideração a curvatura da Terra para calcular um trajeto realista. A aplicação integra a API do IBGE para identificar os estados atravessados pela aeronave e utiliza um backend próprio para fornecer coordenadas e informações geográficas detalhadas.
 
-## Renderização do Mapa
+A aplicação é dividida nas seguintes partes:
 
-Para renderizar o mapa foi utilizado a biblioteca **Leaflet** pelo seguinte conjunto de código:
+- Renderização interativa do mapa
+- Geração, armazenamento e manipulação de coordenadas
+- Comunicação com o backend para dados geográficos
+- Cálculo preciso de posições usando esferometria (curvatura terrestre)
+- Estilização utilizando CSS Modules
+
+## 🗺️ Renderização do Mapa
+
+A renderização do mapa é feita utilizando a biblioteca Leaflet, possibilitando zoom, rotação, interatividade e marcação de pontos.
 
 ```tsx
 <MapContainer
@@ -33,11 +41,17 @@ Para renderizar o mapa foi utilizado a biblioteca **Leaflet** pelo seguinte conj
 ```
 
 > [!NOTE]
-> O contexto inteiro do código está disponivel no arquivo de [renderização de mapa](https://github.com/felipe-sant/FRONT-Maps/blob/main/src/pages/maps.tsx).
+> O contexto completo dessa parte está disponível no arquivo [`src/pages/maps.tsx`](https://github.com/felipe-sant/FRONT-Maps/blob/main/src/pages/maps.tsx).
 
-## Marcações
+## 📍 Marcações no Mapa
 
-Há 3 pontos de destaque no mapa, o ponto inicial, ponto final e o ponto de localização atual (representado pelo aviãozinho). Os pontos inicial e final são gerados aleatóriamente escolhendo coordenadas dentro do território brasileiro, utilizando o microserviço criado como backend da aplicação, segue a função utilizada pra isso abaixo:
+O sistema exibe três pontos principais:
+
+- Ponto inicial
+- Ponto final
+- Posição atual da aeronave
+
+Os pontos inicial e final são obtidos através do backend, que retorna coordenadas válidas dentro do território nacional. O ponto atual é atualizado em tempo real durante a simulação.
 
 ```ts
 public static async getRandomCoord(state?: BrazilianStates): Promise<CoordinateClass | undefined> {
@@ -52,7 +66,7 @@ public static async getRandomCoord(state?: BrazilianStates): Promise<CoordinateC
 }
 ```
 
-Esta função tem a entrada opcional de um estado brasileiro, caso essa entrada seja nula, ele utilizara o contexto do brasil inteiro. No retorno da função, caso de algum erro ele retonara `undefined`, caso contrario é retornado um objeto `CoordinateClass`, uma classe para guardar latitude e longitude.
+A função retorna uma classe chamada `CoordinateClass`, que possui dentro atributos de latitude e longitude.
 
 ```ts
 class CoordinateClass {
@@ -70,13 +84,19 @@ class CoordinateClass {
 }
 ```
 
-## Menu Lateral
+## 📋 Menu Lateral
 
-No canto inferior direito, há um menu com a alternativa do usuário inserir as coordenadas iniciais e finais manualmente, seja digitando ou selecionando com o mouse. Também a o botão "Viajar!", ele tem a função de iniciar a viagem do ponto inicial até o ponto final, alternando o menu para um de visualização de informações sobre o ponto atual.
+No canto inferior direito há um menu que permite:
 
-## Calculo de distancia entre pontos
+- Inserir coordenadas manualmente (digitando ou clicando no mapa)
+- Iniciar a simulação da rota com o botão "Viajar!"
+- Alternar a interface para visualizar informações detalhadas da posição atual durante o voo
 
-Para trabalhar com o mapa mundi, não é possivel utilizar calculos utilizados no plano cartesiano, pois é necessario levar em consideração a curvatura terrestre, foi utilizado a seguinte função para calcular a posição do ponto atual:
+## 📐 Cálculo de Posição com Curvatura Terrestre
+
+Os cálculos de deslocamento não são feitos em plano cartesiano, pois o objetivo do projeto é representar trajetos reais na superfície esférica do planeta.
+
+Para isso, é utilizada uma função baseada em interpolação esférica (Slerp), que determina a posição intermediária ao longo da menor rota entre duas coordenadas (arco do círculo máximo).
 
 ```ts
 function positionBetweenRadianPoints(start: CoordinateClass, end: CoordinateClass, time: number): CoordinateClass {
@@ -111,38 +131,25 @@ function positionBetweenRadianPoints(start: CoordinateClass, end: CoordinateClas
 }
 ```
 
-A função recebe como entrada o ponto inicial como um `CoordinateClass`, ponto final como um `CoordinateClass` e o tempo como um `number` sendo um número de 0 a 1. A função retorna uma coordenada dependendo do tempo, então do ponto 1, para o ponto 2 com o tempo 0.5, é retornado a coordenada correspondente a metade do caminho entre o primeiro e o segundo ponto, levando em consideração a curvatura da terra.
+Essa função recebe:
 
-## Informações sobre a localização atual
+- Ponto inicial
+- Ponto final
+- Um valor entre 0 e 1 representando o progresso do voo
 
-A cada tick de movimentação do ponto, é requisitado ao backend a informação sobre aquele ponto, mostrando informações de estado, município, microregião e macroregião. É utilizado a seguinte função de conexão:
+E retorna a coordenada exata correspondente naquele ponto da rota, considerando a curvatura terrestre.
 
-```ts
-public static async getLocation(coord: CoordinateClass): Promise<Locality | undefined> {
-    try {
-        const query = {
-            lat: coord.latitude,
-            lon: coord.longitude
-        }
-        const response = await get(BackendConnection.routes.coord_location, query)
-        if (!response) return undefined
-        
-        const locality: Locality = {
-            country: response.country,
-            state: response.state,
-            municipality: response.municipality,
-            microregion: response.microregion,
-            mesoregion: response.mesoregion
-        }
-        return locality
-    } catch (error) {
-        console.log(error)
-        return undefined
-    }
-}
-```
+## 🌍 Informações Geográficas da Localização Atual
 
-A função entre com a classe de coordenada e retorna um objeto do tipo de `locality`.
+A cada atualização de posição, o frontend solicita ao backend os seguintes dados sobre o ponto atual:
+
+- País
+- Estado
+- Município
+- Microregião
+- Mesorregião
+
+Essas informações são retornadas em um objeto `Locality` e exibidas ao usuário no painel lateral durante o voo.
 
 ```ts
 type Locality = {
@@ -154,8 +161,6 @@ type Locality = {
 };
 ```
 
-<hr>
-
 <div align="center">
-    developed by <a href="https://github.com/felipe-sant?tab=followers">@felipe-sant</a>
+developed by <a href="https://github.com/felipe-sant?tab=followers">@felipe-sant</a>
 </div>
