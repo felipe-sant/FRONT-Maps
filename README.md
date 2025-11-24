@@ -1,87 +1,161 @@
-<div align="center">
+### [Veja o projeto rodando aqui.](https://front-maps.vercel.app/)
 
-# 📄 Template de React 📄
-  
-<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" /> <br>
+Site que gera dois pontos geográficos aleatórios dentro do território brasileiro e simula uma rota de voo entre eles, considerando com precisão a curvatura da Terra. O sistema integra a API do IBGE para gerenciar as coordenadas geográficas e identificar os estados brasileiros atravessados pela aeronave durante a simulação.
 
-</div>
+O projeto é divido com varias partes, envolvendo a **renderização do mapa**, **calculo de distancia e posição** de pontos entre coordenadas, utilização de uma **API interna** para comunicação com o backend da aplicação e utilização de **css modules**.
 
+## Renderização do Mapa
 
-Este repositório é um template para projetos React, fornecendo uma estrutura básica e as ferramentas necessárias para começar rapidamente.
+Para renderizar o mapa foi utilizado a biblioteca **Leaflet** pelo seguinte conjunto de código:
 
-## 🚀 Começando
+```tsx
+<MapContainer
+    center={currentCoord.toArray()}
+    zoom={6}
+    className={css.map}
+>
+    <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        errorTileUrl="https://upload.wikimedia.org/wikipedia/commons/e/e0/Error.svg"
+    />
+    <Marker position={initialCoord.toArray()} icon={Icons.startIcon} />
+    <Marker position={finalCoord.toArray()} icon={Icons.endIcon} />
+    <Marker position={currentCoord.toArray()} icon={isIlhabela ? Icons.boomIcon : Icons.airplaneIcon} />  
+    <LocationClicked />  {/* Função para captar o clique do usuário */}
+    <Menu
+        moveOn={moveOn}
+        info={{
+            currentCoord: currentCoord
+        }}
+    />
+</MapContainer>
+```
 
-Estas instruções fornecerão uma cópia do projeto em execução na sua máquina local para fins de desenvolvimento e teste.
+> [!NOTE]
+> O contexto inteiro do código está disponivel no arquivo de [renderização de mapa](https://github.com/felipe-sant/FRONT-Maps/blob/main/src/pages/maps.tsx).
 
-### Pré-requisitos
+## Marcações
 
-Você precisará ter instalado:
+Há 3 pontos de destaque no mapa, o ponto inicial, ponto final e o ponto de localização atual (representado pelo aviãozinho). Os pontos inicial e final são gerados aleatóriamente escolhendo coordenadas dentro do território brasileiro, utilizando o microserviço criado como backend da aplicação, segue a função utilizada pra isso abaixo:
 
-- Node.js (versão 14 ou superior)
+```ts
+public static async getRandomCoord(state?: BrazilianStates): Promise<CoordinateClass | undefined> {
+    try {
+        const query = {state: state}
+        const response = await get(BackendConnection.routes.coord_random, query)
+        const coord = new CoordinateClass(response)
+        return coord
+    } catch (error) {
+        console.log(error)
+    }
+}
+```
 
-- npm (geralmente incluído com o Node.js)
+Esta função tem a entrada opcional de um estado brasileiro, caso essa entrada seja nula, ele utilizara o contexto do brasil inteiro. No retorno da função, caso de algum erro ele retonara `undefined`, caso contrario é retornado um objeto `CoordinateClass`, uma classe para guardar latitude e longitude.
 
-### Instalação
+```ts
+class CoordinateClass {
+    public latitude: number;
+    public longitude: number;
 
-    
-1 - Clone o repositório:
+    constructor(coordinateType: CoordinateType) {
+        this.latitude = coordinateType.latitude;
+        this.longitude = coordinateType.longitude;
+    }
 
-    git clone https://github.com/felipe-sant/template-react.git
+    public toArray(): [latidute: number, longitude: number] {
+        return [this.latitude, this.longitude];
+    }
+}
+```
 
-2 - Instale as dependências:
+## Menu Lateral
 
-    npm install
+No canto inferior direito, há um menu com a alternativa do usuário inserir as coordenadas iniciais e finais manualmente, seja digitando ou selecionando com o mouse. Também a o botão "Viajar!", ele tem a função de iniciar a viagem do ponto inicial até o ponto final, alternando o menu para um de visualização de informações sobre o ponto atual.
 
-### Executando o Projeto
+## Calculo de distancia entre pontos
 
-Para iniciar o servidor de desenvolvimento, use:
+Para trabalhar com o mapa mundi, não é possivel utilizar calculos utilizados no plano cartesiano, pois é necessario levar em consideração a curvatura terrestre, foi utilizado a seguinte função para calcular a posição do ponto atual:
 
-    npm start
+```ts
+function positionBetweenRadianPoints(start: CoordinateClass, end: CoordinateClass, time: number): CoordinateClass {
+    const toRadians = (deg: number) => (deg * Math.PI) / 180;
+    const toDegrees = (rad: number) => (rad * 180) / Math.PI;
 
-## 📂 Estrutura do Projeto
+    const lat1 = toRadians(start.latitude);
+    const lon1 = toRadians(start.longitude);
+    const lat2 = toRadians(end.latitude);
+    const lon2 = toRadians(end.longitude);
 
-    react-template/
-    ├─── public/
-    │   └─── index.html
-    ├─── src/
-    │   ├─── functions/
-    │   ├─── pages/
-    │   ├─── routers/
-    │   ├─── styles/
-    │   ├─── App.js
-    │   ├─── index.js
-    │   └─── ...
-    ├─── .gitignore
-    ├─── package.json
-    ├─── README.md
-    └─── ...
+    const deltaSigma = Math.acos(
+        Math.sin(lat1) * Math.sin(lat2) +
+        Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)
+    );
 
-- [public/](public/): Contém o arquivo HTML principal e outros recursos públicos.
+    if (deltaSigma === 0) {
+        return new CoordinateClass({latitude: start.latitude, longitude: start.longitude});
+    }
 
-- [src/](src/): Contém os arquivos de código-fonte do projeto
+    const a = Math.sin((1 - time) * deltaSigma) / Math.sin(deltaSigma);
+    const b = Math.sin(time * deltaSigma) / Math.sin(deltaSigma);
 
-  - [functions/](src/functions): Contém os arquivos de funções.
+    const x = a * Math.cos(lat1) * Math.cos(lon1) + b * Math.cos(lat2) * Math.cos(lon2);
+    const y = a * Math.cos(lat1) * Math.sin(lon1) + b * Math.cos(lat2) * Math.sin(lon2);
+    const z = a * Math.sin(lat1) + b * Math.sin(lat2);
 
-  - [pages/](src/pages): Páginas principais da aplicação.
- 
-  - [routers/](src/routers): Contém o arquivo de rotas.
+    const lat = Math.atan2(z, Math.sqrt(x * x + y * y));
+    const lon = Math.atan2(y, x);
 
-  - [styles/](src/styles): Arquivos de estilo.
+    return new CoordinateClass({latitude: toDegrees(lat), longitude: toDegrees(lon)});
+}
+```
 
-## 📚 Tecnologias Utilizadas
+A função recebe como entrada o ponto inicial como um `CoordinateClass`, ponto final como um `CoordinateClass` e o tempo como um `number` sendo um número de 0 a 1. A função retorna uma coordenada dependendo do tempo, então do ponto 1, para o ponto 2 com o tempo 0.5, é retornado a coordenada correspondente a metade do caminho entre o primeiro e o segundo ponto, levando em consideração a curvatura da terra.
 
-- React
-  
-- React Router
+## Informações sobre a localização atual
 
-- Fetch API
+A cada tick de movimentação do ponto, é requisitado ao backend a informação sobre aquele ponto, mostrando informações de estado, município, microregião e macroregião. É utilizado a seguinte função de conexão:
 
-- styled-components (CSS Modules)
+```ts
+public static async getLocation(coord: CoordinateClass): Promise<Locality | undefined> {
+    try {
+        const query = {
+            lat: coord.latitude,
+            lon: coord.longitude
+        }
+        const response = await get(BackendConnection.routes.coord_location, query)
+        if (!response) return undefined
+        
+        const locality: Locality = {
+            country: response.country,
+            state: response.state,
+            municipality: response.municipality,
+            microregion: response.microregion,
+            mesoregion: response.mesoregion
+        }
+        return locality
+    } catch (error) {
+        console.log(error)
+        return undefined
+    }
+}
+```
 
-## 📝 Licença
+A função entre com a classe de coordenada e retorna um objeto do tipo de `locality`.
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-<br>
+```ts
+type Locality = {
+    country: string;
+    state?: string;
+    municipality?: string;
+    microregion?: string;
+    mesoregion?: string;
+};
+```
 
 <hr>
+
+<div align="center">
+    developed by <a href="https://github.com/felipe-sant?tab=followers">@felipe-sant</a>
+</div>
