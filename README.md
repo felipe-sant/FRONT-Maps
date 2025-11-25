@@ -1,5 +1,3 @@
-# ✈️ Simulador de Rotas Aéreas no Território Brasileiro
-
 ### 🔗 Veja o projeto rodando: https://front-maps.vercel.app/
 
 Este projeto gera dois pontos geográficos aleatórios dentro do território brasileiro e simula uma rota aérea entre eles, levando em consideração a curvatura da Terra para calcular um trajeto realista. A aplicação integra a API do IBGE para identificar os estados atravessados pela aeronave e utiliza um backend próprio para fornecer coordenadas e informações geográficas detalhadas.
@@ -14,7 +12,7 @@ A aplicação é dividida nas seguintes partes:
 
 ## 🗺️ Renderização do Mapa
 
-A renderização do mapa é feita utilizando a biblioteca Leaflet, possibilitando zoom, rotação, interatividade e marcação de pontos.
+A renderização do mapa é feita utilizando a biblioteca Leaflet, possibilitando zoom, rotação, interatividade e marcação de pontos. Abaixo foi o component utilizado para a renderização:
 
 ```tsx
 <MapContainer
@@ -66,7 +64,7 @@ public static async getRandomCoord(state?: BrazilianStates): Promise<CoordinateC
 }
 ```
 
-A função retorna uma classe chamada `CoordinateClass`, que possui dentro atributos de latitude e longitude.
+A função permite a opção de informar um estado específico, retornando apenas os pontos referentes àquele estado. Caso contrário, serão retornados pontos de todo o Brasil. O resultado da função é uma instância da classe `CoordinateClass`, que contém atributos de latitude e longitude.
 
 ```ts
 class CoordinateClass {
@@ -160,6 +158,13 @@ type Locality = {
     mesoregion?: string;
 };
 ```
+
+## Links relacionaveis
+
+Logo abaixo contém os links relacionaveis a este projeto:
+
+- [Demonstração](https://front-maps.vercel.app/)
+- [Backend](https://github.com/felipe-sant/back-maps)
 
 <div align="center">
 developed by <a href="https://github.com/felipe-sant?tab=followers">@felipe-sant</a>
